@@ -23,10 +23,6 @@ public class Square30ES extends BaseShape {
             0.5f, -0.5f, 0.0f   // bottom right
 
     };
-    // Set color with red, green, blue and alpha (opacity) values
-    private int positionHandle;
-    private int colorHandle;
-
     @Override
     protected FloatBuffer getVertexBuffer() {
         // initialize vertex byte buffer for shape coordinates
@@ -68,12 +64,14 @@ public class Square30ES extends BaseShape {
         positionHandle = GLES30.glGetAttribLocation(mProgram, "vPosition");
         // get handle to fragment shader's vColor member
         colorHandle = GLES30.glGetAttribLocation(mProgram, "vColor");
+        uMatrixLocation= GLES30.glGetUniformLocation(mProgram, "uMVPMatrix");
     }
 
     @Override
     public void draw() {
         // Add program to OpenGL ES environment
         GLES30.glUseProgram(mProgram);
+        GLES30.glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix, 0);
         // Enable a handle to the triangle vertices
         GLES30.glEnableVertexAttribArray(positionHandle);
         // Prepare the triangle coordinate data

@@ -1,5 +1,7 @@
 package com.meng.opengl.shape;
 
+import android.opengl.Matrix;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -19,24 +21,26 @@ public abstract class BaseShape {
             "}";
     public final static String VERTEX_SHADER_CODE_30_ES=
             "#version 300 es                          \n"+
-            "layout(location = 0) in vec4 vPosition;  \n"+
-            "layout (location = 1) in vec4 vColor;    \n"+
-            "out vec4 color;\n" +
-            "void main()                              \n"+
-            "{                                        \n"+
-            "   gl_Position = vPosition;              \n"+
-            "    color = vColor;                   \n"+
-            "}                                        \n";
+                    //变换矩阵 统一变量
+                    "uniform mat4 uMVPMatrix;\n"+
+                    "layout(location = 0) in vec4 vPosition;  \n"+
+                    "layout (location = 1) in vec4 vColor;    \n"+
+                    "out vec4 color;\n" +
+                    "void main()                              \n"+
+                    "{                                        \n"+
+                    "   gl_Position =uMVPMatrix * vPosition;              \n"+
+                    "    color = vColor;                   \n"+
+                    "}                                        \n";
 
     public final static String FRAGMENT_SHADER_CODE_30_ES=
             "#version 300 es                              \n"+
-            "precision mediump float;                     \n"+
-            "in vec4 color;                               \n" +
-            "out vec4 fragColor;                          \n"+
-            "void main()                                  \n"+
-            "{                                            \n"+
-            "   fragColor = color;                        \n"+
-            "}                                            \n";
+                    "precision mediump float;                     \n"+
+                    "in vec4 color;                               \n" +
+                    "out vec4 fragColor;                          \n"+
+                    "void main()                                  \n"+
+                    "{                                            \n"+
+                    "   fragColor = color;                        \n"+
+                    "}                                            \n";
     public static final int COORDS_PER_VERTEX = 3;
     public static final int COORDS_PER_FRAGMENT = 4;
     public int vertexCount;
@@ -45,6 +49,9 @@ public abstract class BaseShape {
     public FloatBuffer vertexBuffer;
     public FloatBuffer fragmentBuffer;
     public int mProgram;
+    public int uMatrixLocation;
+    public int positionHandle;
+    public int colorHandle;
 
     protected abstract FloatBuffer getVertexBuffer();
 
@@ -73,11 +80,14 @@ public abstract class BaseShape {
         onInit();
     }
 
+    public final float[] mMatrix = new float[16];
+
     public void onInit() {
         vertexShaderCode = getVertexShaderCode();
         fragmentShaderCode = getFragmentShaderCode();
         vertexBuffer=getVertexBuffer();
         fragmentBuffer=getFragmentBuffer();
+
     }
 
     public FloatBuffer setFloatBuffer(float[] data){
@@ -89,4 +99,16 @@ public abstract class BaseShape {
         return floatBuffer;
     }
 
+    public void initWindow(int width, int height){
+        final float aspectRatio = width > height ?
+                (float) width / (float) height :
+                (float) height / (float) width;
+        if (width > height) {
+            //横屏
+            Matrix.orthoM(mMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
+        } else {
+            //竖屏
+            Matrix.orthoM(mMatrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f);
+        }
+    }
 }

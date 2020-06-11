@@ -1,8 +1,9 @@
-package com.meng.opengl;
+package com.meng.opengl.shape;
 
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 
+import com.meng.opengl.BaseRenderer;
 import com.meng.opengl.shape.BaseShape;
 
 import java.util.List;
@@ -10,11 +11,11 @@ import java.util.List;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class MyGLRenderer implements GLSurfaceView.Renderer {
+public class ShapeRenderer implements BaseRenderer {
 
     private final List<BaseShape> list;
 
-    public MyGLRenderer(List<BaseShape> list) {
+    public ShapeRenderer(List<BaseShape> list) {
         this.list = list;
     }
 
@@ -32,6 +33,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceChanged(GL10 gl10, int i, int i1) {
         // Red raw background color
         GLES30.glViewport(0, 0, i, i1);
+        for(BaseShape baseShape:list){
+            baseShape.initWindow(i,i1);
+        }
     }
 
     @Override
@@ -42,6 +46,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }
     }
 
+    @Override
     public void destroyed() {
         for(BaseShape baseShape:list){
             baseShape.destroy();

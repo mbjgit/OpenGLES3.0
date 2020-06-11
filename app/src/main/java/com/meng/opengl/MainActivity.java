@@ -28,4 +28,16 @@ public class MainActivity extends AppCompatActivity {
         glSurfaceView.setOnClickListener(view -> glSurfaceView.requestRender());
         setContentView(glSurfaceView);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        glSurfaceView.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        glSurfaceView.onResume();
+    }
 }

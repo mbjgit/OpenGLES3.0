@@ -14,8 +14,7 @@ public class Triangle30ES extends BaseShape{
     public Triangle30ES() {
         super();
     }
-    private int positionHandle;
-    private int colorHandle;
+
 
     @Override
     protected FloatBuffer getVertexBuffer() {
@@ -56,11 +55,13 @@ public class Triangle30ES extends BaseShape{
         positionHandle = GLES30.glGetAttribLocation(mProgram, "vPosition");
         // get handle to fragment shader's vColor member
         colorHandle = GLES30.glGetAttribLocation(mProgram, "vColor");
+        uMatrixLocation= GLES30.glGetUniformLocation(mProgram, "uMVPMatrix");
     }
 
     @Override
     public void draw() {
         GLES30.glUseProgram(mProgram);
+        GLES30.glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix, 0);
         GLES30.glVertexAttribPointer(positionHandle, COORDS_PER_VERTEX, GLES30.GL_FLOAT, false, 0, vertexBuffer);
         GLES30.glEnableVertexAttribArray(positionHandle);
 
